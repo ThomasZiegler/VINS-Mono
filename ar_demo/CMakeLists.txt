@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   message_filters
   camera_model
+  ceres_catkin
 )
 find_package(OpenCV REQUIRED)
 
@@ -31,8 +32,11 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(Eigen3)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${ceres_catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
 )
+
+
 
 add_executable(ar_demo_node src/ar_demo_node.cpp)
 

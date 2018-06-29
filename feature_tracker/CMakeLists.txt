@@ -23,8 +23,10 @@ include_directories(
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(Eigen3)
+find_package(ceres_catkin)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${ceres_catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
 )
 
@@ -33,5 +35,6 @@ add_executable(feature_tracker
     src/parameters.cpp
     src/feature_tracker.cpp
     )
+
 
 target_link_libraries(feature_tracker ${catkin_LIBRARIES} ${OpenCV_LIBS})

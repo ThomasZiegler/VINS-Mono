@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
     nav_msgs
     tf
     cv_bridge
+    ceres_catkin
     )
 
 find_package(OpenCV REQUIRED)
@@ -27,6 +28,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(Eigen3)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${ceres_catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
 )
 
@@ -52,5 +54,13 @@ add_executable(vins_estimator
 
 
 target_link_libraries(vins_estimator ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES}) 
+
+add_dependencies(vins_estimator  ${catkin_EXPORTED_TARGETS})
+
+#add_service_files(
+#  FILES
+#  InitScale.srv
+#)
+
 
 
