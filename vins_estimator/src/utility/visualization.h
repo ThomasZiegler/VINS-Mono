@@ -11,6 +11,7 @@
 #include <nav_msgs/Path.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/TransformStamped.h>
 #include <visualization_msgs/Marker.h>
 #include <tf/transform_broadcaster.h>
 #include "CameraPoseVisualization.h"
@@ -36,6 +37,8 @@ void pubLatestOdometry(const Eigen::Vector3d &P, const Eigen::Quaterniond &Q, co
 void printStatistics(const Estimator &estimator, double t);
 
 void pubOdometry(const Estimator &estimator, const std_msgs::Header &header);
+
+void pubTransform(const Estimator &estimator, const std_msgs::Header &header);
 
 void pubInitialGuess(const Estimator &estimator, const std_msgs::Header &header);
 

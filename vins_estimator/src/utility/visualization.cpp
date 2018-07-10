@@ -3,6 +3,7 @@
 using namespace ros;
 using namespace Eigen;
 ros::Publisher pub_odometry, pub_latest_odometry;
+ros::Publisher pub_transform;
 ros::Publisher pub_path, pub_relo_path;
 ros::Publisher pub_point_cloud, pub_margin_cloud;
 ros::Publisher pub_key_poses;
@@ -26,6 +27,7 @@ void registerPub(ros::NodeHandle &n)
     pub_path = n.advertise<nav_msgs::Path>("path", 1000);
     pub_relo_path = n.advertise<nav_msgs::Path>("relocalization_path", 1000);
     pub_odometry = n.advertise<nav_msgs::Odometry>("odometry", 1000);
+    pub_transform = n.advertise<geometry_msgs::TransformStamped>("transform" ,1000);
     pub_point_cloud = n.advertise<sensor_msgs::PointCloud>("point_cloud", 1000);
     pub_margin_cloud = n.advertise<sensor_msgs::PointCloud>("history_cloud", 1000);
     pub_key_poses = n.advertise<visualization_msgs::Marker>("key_poses", 1000);
@@ -172,6 +174,29 @@ void pubOdometry(const Estimator &estimator, const std_msgs::Header &header)
         foutC.close();
     }
 }
+
+void pubTransform(const Estimator &estimator, const std_msgs::Header &header)
+{
+    if (estimator.solver_flag == Estimator::SolverFlag::NON_LINEAR)
+    {
+      geometry_msgs::TransformStamped estimated_transform;
+      estimated_transform.header = header;
+      Quaterniond tmp_Q;
+      tmp_Q = Quaterniond(estimator.Rs[WINDOW_SIZE]);
+
+      estimated_transform.transform.rotation.x=tmp_Q.x();
+      estimated_transform.transform.rotation.y=tmp_Q.y();
+      estimated_transform.transform.rotation.z=tmp_Q.z();
+      estimated_transform.transform.rotation.w=tmp_Q.w();
+
+      estimated_transform.transform.translation.x = estimator.Ps[WINDOW_SIZE].x();
+      estimated_transform.transform.translation.y = estimator.Ps[WINDOW_SIZE].y();
+      estimated_transform.transform.translation.z = estimator.Ps[WINDOW_SIZE].z();
+
+      pub_transform.publish(estimated_transform);
+    }
+}
+
 
 void pubKeyPoses(const Estimator &estimator, const std_msgs::Header &header)
 {

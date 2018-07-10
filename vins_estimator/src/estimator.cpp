@@ -882,7 +882,7 @@ void Estimator::optimization()
                     continue;
 
                 // Only add feature constraints to marginalization if feature has been observed in mor than 6 frames (Evaluation 4.9)
-                if (it_per_id.start_frame < 6 && it_per_id.used_num <= 6
+                if (it_per_id.start_frame < 6 && it_per_id.used_num <= 6)
                 {
                     continue;
                 }

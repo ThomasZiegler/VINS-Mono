@@ -319,6 +319,7 @@ void process()
             header.frame_id = "world";
 
             pubOdometry(estimator, header);
+            pubTransform(estimator, header);
             pubKeyPoses(estimator, header);
             pubCameraPose(estimator, header);
             pubPointCloud(estimator, header);
