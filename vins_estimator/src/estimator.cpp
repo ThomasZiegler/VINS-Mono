@@ -715,11 +715,20 @@ void Estimator::optimization()
     {
         it_per_id.used_num = it_per_id.feature_per_frame.size();
         if (!(it_per_id.used_num >= 2 && it_per_id.start_frame < WINDOW_SIZE - 2))
+        {
             continue;
+        } 
  
         ++feature_index;
 
-        int imu_i = it_per_id.start_frame, imu_j = imu_i - 1;
+        int imu_i = it_per_id.start_frame;
+        int imu_j = imu_i - 1;
+
+        // Ignore featue constraints for features which have been seen in one of the 4 oldest keyframes (Evaluation 4.7)
+        if(imu_i < 4)
+        {
+            continue;
+        }
         
         Vector3d pts_i = it_per_id.feature_per_frame[0].point;
 
@@ -730,6 +739,11 @@ void Estimator::optimization()
             {
                 continue;
             }
+//            // Ignore feature constraints in the oldest 4 keyframes (Evaluation 4.6)
+//            if (imu_j < 4)
+//            {
+//                continue;    
+//            }
             Vector3d pts_j = it_per_frame.point;
             if (ESTIMATE_TD)
             {
@@ -751,7 +765,13 @@ void Estimator::optimization()
             {
                 ProjectionFactor *f = new ProjectionFactor(pts_i, pts_j);
                 problem.AddResidualBlock(f, loss_function, para_Pose[imu_i], para_Pose[imu_j], para_Ex_Pose[0], para_Feature[feature_index]);
+//                // Set feature constraints in the oldest 4 keyframes constant (Evaluation 4.5)
+//                if(imu_j < 4)
+//                {
+//                    problem.SetParameterBlockConstant(para_Feature[feature_index]);
+//                }
             }
+                
             f_m_cnt++;
         }
     }
@@ -860,6 +880,12 @@ void Estimator::optimization()
                 it_per_id.used_num = it_per_id.feature_per_frame.size();
                 if (!(it_per_id.used_num >= 2 && it_per_id.start_frame < WINDOW_SIZE - 2))
                     continue;
+
+                // Only add feature constraints to marginalization if feature has been observed in mor than 6 frames (Evaluation 4.9)
+                if (it_per_id.start_frame < 6 && it_per_id.used_num <= 6
+                {
+                    continue;
+                }
 
                 ++feature_index;
 
